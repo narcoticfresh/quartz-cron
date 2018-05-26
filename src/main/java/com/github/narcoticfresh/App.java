@@ -1,6 +1,7 @@
 package com.github.narcoticfresh;
 
 import com.github.narcoticfresh.model.JobConfig;
+import java.io.File;
 import java.util.Map.Entry;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
@@ -24,7 +25,18 @@ public class App
     public static void main( String[] args )
     {
         try {
-            new JobConfiguration("/home/dn/git/quartz-cron/configuration.yml");
+            String configPath;
+            if (args.length > 0) {
+                configPath = args[0];
+
+                if (!new File(configPath).exists()) {
+                    throw new Exception("Config File " + configPath + " does not exist");
+                }
+            } else {
+                throw new Exception("You must pass a config file path as first parameter");
+            }
+
+            new JobConfiguration(configPath);
 
             // Grab the Scheduler instance from the Factory
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
